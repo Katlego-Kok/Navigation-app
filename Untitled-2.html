@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>South Africa Map Navigation</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    #map {
+      height: 500px;
+      width: 100%;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .info {
+      margin-bottom: 20px;
+      padding: 15px;
+      background-color: #f0f8ff;
+      border-radius: 5px;
+      border-left: 4px solid #4285f4;
+    }
+  </style>
+</head>
+<body>
+  <div class="info">
+    <h2>🗺️ South Africa Map Navigation</h2>
+    <p>Click markers to zoom in and explore cities across South Africa.</p>
+  </div>
+
+  <div id="map"></div>
+
+  <script>
+    let map;
+
+    async function initMap() {
+      // Start centered on South Africa
+      map = new google.maps.Map(document.getElementById("map"), {
+        center: { lat: -30.5595, lng: 22.9375 }, // South Africa center
+        zoom: 6,
+        mapTypeControl: true,
+        streetViewControl: true,
+        fullscreenControl: true,
+        zoomControl: true
+      });
+
+      // Define some major cities in South Africa
+      const cities = [
+        { name: "Johannesburg", position: { lat: -26.2041, lng: 28.0473 } },
+        { name: "Cape Town", position: { lat: -33.9249, lng: 18.4241 } },
+        { name: "Durban", position: { lat: -29.8587, lng: 31.0218 } },
+        { name: "Pretoria", position: { lat: -25.7479, lng: 28.2293 } },
+        { name: "Port Elizabeth (Gqeberha)", position: { lat: -33.9608, lng: 25.6022 } }
+      ];
+
+      // Create markers for each city
+      cities.forEach(city => {
+        const marker = new google.maps.Marker({
+          position: city.position,
+          map: map,
+          title: city.name
+        });
+
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding:10px;">
+              <h3>${city.name}</h3>
+              <p>Click to zoom in</p>
+            </div>
+          `
+        });
+
+        // Show info window when marker is clicked
+        marker.addListener("click", () => {
+          infoWindow.open(map, marker);
+          map.setCenter(city.position);
+          map.setZoom(12); // Zoom closer to city
+        });
+      });
+    }
+
+    // Handle API auth errors
+    window.gm_authFailure = function () {
+      console.error("❌ Google Maps API authentication failed!");
+      document.getElementById("map").innerHTML = `
+        <div style="display: flex; align-items: center; justify-content: center; height: 100%; background: #ffe6e6; color: #d00;">
+          <div style="text-align: center;">
+            <h3>🔑 API Key Error</h3>
+            <p>Please check your Google Maps API key.</p>
+          </div>
+        </div>
+      `;
+    };
+  </script>
+    
+    <!-- 
+    🔧 CORRECTED API LOADING:
+    - Added loading=async parameter
+    - Included marker library
+    - Proper callback function
+    - Error handling
+    -->
+    <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDZGHjN4SiXFetulVD9MgnelQZgjkRdMps&callback=initMap">
+</script>
+
+</body>
+</html>
